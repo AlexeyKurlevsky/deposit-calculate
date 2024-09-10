@@ -1,6 +1,5 @@
 from collections import OrderedDict
 from datetime import datetime
-from decimal import Decimal
 
 from pydantic import BaseModel, Field, RootModel, StrictInt, field_validator, model_validator
 from typing_extensions import Self
@@ -24,7 +23,7 @@ class DepositPayload(BaseModel):
 
 
 class ResponseModel(RootModel):
-    root: OrderedDict[str, Decimal]
+    root: OrderedDict[str, float]
 
     @model_validator(mode="after")
     def validate_keys(self) -> Self:
