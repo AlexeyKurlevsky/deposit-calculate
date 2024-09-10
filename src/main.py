@@ -13,7 +13,7 @@ init_logger()
 logger = getLogger(__name__)
 
 
-def init_app():
+def init_app() -> FastAPI:
     app = FastAPI()
     app.include_router(routes.routes)
     return app

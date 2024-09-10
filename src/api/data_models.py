@@ -1,6 +1,9 @@
+from collections import OrderedDict
 from datetime import datetime
+from decimal import Decimal
 
-from pydantic import BaseModel, Field, StrictInt, field_validator
+from pydantic import BaseModel, Field, RootModel, StrictInt, field_validator, model_validator
+from typing_extensions import Self
 
 
 class DepositPayload(BaseModel):
@@ -18,3 +21,17 @@ class DepositPayload(BaseModel):
             raise ValueError("Неверно указан формат даты. Укажите в формате dd.mm.YYYY") from error
 
         return res
+
+
+class ResponseModel(RootModel):
+    root: OrderedDict[str, Decimal]
+
+    @model_validator(mode="after")
+    def validate_keys(self) -> Self:
+        for key in self.root:
+            try:
+                datetime.strptime(key, "%d.%m.%Y")
+            except ValueError as error:
+                raise ValueError(f"Неверно указан формат даты {key}. Укажите в формате dd.mm.YYYY") from error
+
+        return self

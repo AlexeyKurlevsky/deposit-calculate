@@ -9,3 +9,6 @@ lintfix: format
 
 format:
 	poetry run ruff format
+
+test:
+	pytest
