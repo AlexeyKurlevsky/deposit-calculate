@@ -10,13 +10,15 @@ python = "^3.12"
 fastapi = "^0.114.0"
 uvicorn = "^0.30.6"
 load-dotenv = "^0.1.0"
+pytest = "^8.3.3"
+httpx = "^0.27.2"
 
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.6.4"
 
 [tool.ruff]
-src = ["src"]
+src = ["src", "tests"]
 line-length = 120
 
 [tool.ruff.lint]

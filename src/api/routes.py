@@ -1,12 +1,12 @@
 from collections import OrderedDict
+from decimal import Decimal
 from pathlib import Path
 
 from fastapi import APIRouter
-from fastapi.responses import JSONResponse
 from starlette.responses import PlainTextResponse
 from tomllib import load as load_toml
 
-from api.data_models import DepositPayload
+from api.data_models import DepositPayload, ResponseModel
 from api.utils import get_last_day_of_month
 
 
@@ -14,7 +14,7 @@ routes = APIRouter()
 
 
 @routes.post("/calculate")
-async def calculate_deposit(payload: DepositPayload) -> JSONResponse:
+async def calculate_deposit(payload: DepositPayload) -> ResponseModel:
     values = OrderedDict()
 
     amount = payload.amount
@@ -22,8 +22,8 @@ async def calculate_deposit(payload: DepositPayload) -> JSONResponse:
     month = payload.date.month
     for _ in range(1, payload.periods + 1):
         initial_date = get_last_day_of_month(year, month)
-        amount *= 1 + payload.rate / 12 / 100
-        amount = round(amount, 2)
+        amount *= 1 + Decimal(payload.rate / 12 / 100)
+        amount = Decimal(amount).quantize(Decimal("1.00"))
         values[initial_date] = amount
 
         month += 1
@@ -31,7 +31,7 @@ async def calculate_deposit(payload: DepositPayload) -> JSONResponse:
             month = 1
             year += 1
 
-    return JSONResponse(content=values, status_code=200)
+    return ResponseModel(root=values)
 
 
 @routes.get("/version")
