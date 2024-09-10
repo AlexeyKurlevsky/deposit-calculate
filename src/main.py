@@ -14,7 +14,7 @@ logger = getLogger(__name__)
 
 
 def init_app() -> FastAPI:
-    app = FastAPI()
+    app = FastAPI(root_path="/app")
     app.include_router(routes.routes)
     return app
 
