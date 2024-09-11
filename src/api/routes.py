@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from decimal import Decimal
+from decimal import ROUND_HALF_UP, Decimal
 from pathlib import Path
 
 from fastapi import APIRouter
@@ -10,7 +10,7 @@ from api.data_models import DepositPayload, ResponseModel
 from api.utils import get_last_day_of_month
 
 
-routes = APIRouter()
+routes = APIRouter(tags=["Main requests"])
 
 
 @routes.post("/calculate")
@@ -22,9 +22,8 @@ async def calculate_deposit(payload: DepositPayload) -> ResponseModel:
     month = payload.date.month
     for _ in range(1, payload.periods + 1):
         initial_date = get_last_day_of_month(year, month)
-        amount *= 1 + Decimal(payload.rate / 12 / 100)
-        amount = Decimal(amount).quantize(Decimal("1.00"))
-        values[initial_date] = amount
+        amount *= 1 + payload.rate / 12 / 100
+        values[initial_date] = Decimal(amount).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
 
         month += 1
         if month > 12:
