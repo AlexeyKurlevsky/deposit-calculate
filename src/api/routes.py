@@ -10,7 +10,7 @@ from api.data_models import DepositPayload, ResponseModel
 from api.utils import get_last_day_of_month
 
 
-routes = APIRouter()
+routes = APIRouter(tags=["Main requests"])
 
 
 @routes.post("/calculate")
